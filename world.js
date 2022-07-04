@@ -149,7 +149,8 @@ function p3_drawTile(i, j) {
       textSize(20);
       let key2 = [i - 1, j];
       let key3 = [i , j + 1];
-      if (tileType[key2] == tile_fence || tileType[key3] == tile_fence) {
+      let key4 = [i - 1 , j + 1];
+      if (tileType[key2] == tile_fence || tileType[key3] == tile_fence || tileType[key4] == tile_fence ) {
         text('🐏', 0, tw / 2);
       } else {
         text('🐖', 0, tw / 2);
