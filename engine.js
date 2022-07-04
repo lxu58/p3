@@ -40,8 +40,8 @@ function rebuildWorld(key) {
   if (window.p3_worldKeyChanged) {
     window.p3_worldKeyChanged(key);
   }
-  tile_width = window.p3_tileWidth ? window.p3_tileWidth() : 32;
-  tile_height = window.p3_tileHeight ? window.p3_tileHeight() : 32;
+  tile_width = window.p3_tileWidth ? window.p3_tileWidth() : 80;
+  tile_height = window.p3_tileHeight ? window.p3_tileHeight() : 80;
   tile_columns = Math.ceil(width / tile_width);
   tile_rows = Math.ceil(height / tile_height);
 }

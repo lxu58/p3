@@ -14,11 +14,12 @@
     p3_drawAfter
 */
 
-function p3_preload() {}
+function p3_preload() { }
 
-function p3_setup() {}
+function p3_setup() { }
 
 let worldSeed;
+let tilesize = 40;
 
 function p3_worldKeyChanged(key) {
   worldSeed = XXH.h32(key, 0);
@@ -27,10 +28,10 @@ function p3_worldKeyChanged(key) {
 }
 
 function p3_tileWidth() {
-  return 16;
+  return tilesize;
 }
 function p3_tileHeight() {
-  return 16;
+  return tilesize;
 }
 
 let [tw, th] = [p3_tileWidth(), p3_tileHeight()];
@@ -43,13 +44,35 @@ function p3_tileClicked(i, j) {
   console.log(i, j);
 }
 
-function p3_drawBefore() {}
+function p3_drawBefore() { }
 
 function p3_drawTile(i, j) {
   noStroke();
-  fill(noise(i, j) * 255)
 
   push();
+  
+
+
+
+  if (noise(i, j) > 0.4) {
+    tile_grass(i, j);
+    if (noise(i + 20, j + 20) > 0.6) {
+     // tile_fence(i, j);
+     fill(255);
+     //stroke(1);
+     rect(i * tilesize + 0, j * tilesize + 8, 40, 5);
+     //rect(i * tilesize + 5, j * tilesize + 5, 5, 15, 2);
+     //rect(i * tilesize + 18, j * tilesize + 5, 5, 15, 2);
+     //rect(i * tilesize + 31, j * tilesize + 5, 5, 15, 2);
+    }
+  } else {
+    tile_ground(i, j);
+    if (noise(i + 20, j + 20) > 0.7) {
+      tile_waterPit(i, j)
+    }
+  }
+
+
 
   beginShape();
   vertex(0, 0);
@@ -58,11 +81,11 @@ function p3_drawTile(i, j) {
   vertex(th, 0);
   endShape(CLOSE);
 
-  let n = clicks[[i, j]] | 0;
-  if (n % 2 == 1) {
-    fill(255, 255, 0, 180);
-    ellipse(th/2, tw/2, 10, 10);
-  }
+  // let n = clicks[[i, j]] | 0;
+  // if (n % 2 == 1) {
+  //   fill(255, 255, 0, 180);
+  //   ellipse(th/2, tw/2, 10, 10);
+  // }
 
   pop();
 }
@@ -83,4 +106,41 @@ function p3_drawSelectedTile(i, j) {
   text("(" + [i, j] + ")", 0, 0);
 }
 
-function p3_drawAfter() {}
+
+
+function tile_ground(i, j) {
+  noStroke();
+  fill(237, 209, 145);
+  quad(i * tilesize, j * tilesize, (i + 1) * tilesize, j * tilesize,
+    (i + 1) * tilesize, (j + 1) * tilesize, i * tilesize, (j + 1) * tilesize);
+}
+
+function tile_grass(i, j) {
+  noStroke();
+  fill(197, 250, 162);
+  quad(i * tilesize, j * tilesize, (i + 1) * tilesize, j * tilesize,
+    (i + 1) * tilesize, (j + 1) * tilesize, i * tilesize, (j + 1) * tilesize);
+
+
+}
+
+function tile_fence(i, j) {
+  fill(255);
+  stroke(1);
+  rect(i * tilesize + 0, j * tilesize + 8, 40, 5);
+  rect(i * tilesize + 5, j * tilesize + 5, 5, 15, 2);
+  rect(i * tilesize + 18, j * tilesize + 5, 5, 15, 2);
+  rect(i * tilesize + 31, j * tilesize + 5, 5, 15, 2);
+
+}
+
+function tile_waterPit(i, j) {
+  fill(194, 233, 255);
+  noStroke();
+  ellipse(i * tilesize + 11, j * tilesize + 18, 20, 10);
+  ellipse(i * tilesize + 16, j * tilesize + 20, 5, 5);
+  ellipse(i * tilesize + 21, j * tilesize + 20, 7, 7);
+
+}
+
+function p3_drawAfter() { }
