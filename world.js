@@ -69,22 +69,41 @@ function p3_drawTile(i, j) {
   let draw_ground = false;
   let draw_fence = false;
   let draw_water = false;
+  let key = [i, j];
+  let key_top = [i, j - 1];
+  let key_bottom = [i, j + 1];
+  let key_left = [i - 1, j];
+  let key_right = [i + 1, j];
 
   push();
 
   if (noise(i, j) > 0.6) {
-    draw_grass = true;
-    set_tileType(i, j, tile_grass);
-    if (noise(i + 10, j + 10) > 0.7) {
-      draw_fence = true;
-      set_tileType(i, j, tile_fence);
+
+    if (tileType[key_top] == tile_ground && tileType[key_bottom] == tile_ground && tileType[key_left] == tile_ground && tileType[key_right] == tile_ground) {
+      draw_ground = true;
+      set_tileType(i, j, tile_ground);
+    } else {
+      draw_grass = true;
+      set_tileType(i, j, tile_grass);
+      if (noise(i + 10, j + 10) > 0.7) {
+        draw_fence = true;
+        set_tileType(i, j, tile_fence);
+      }
     }
+
   } else {
-    draw_ground = true;
-    set_tileType(i, j, tile_ground);
-    if (noise(i + 10, j + 10) > 0.7) {
-      draw_water = true;
-      set_tileType(i, j, tile_water);
+
+    if (tileType[key_top] == tile_grass && tileType[key_bottom] == tile_grass && tileType[key_left] == tile_grass && tileType[key_right] == tile_grass) {
+      draw_grass = true;
+      set_tileType(i, j, tile_grass);
+    } else {
+
+      draw_ground = true;
+      set_tileType(i, j, tile_ground);
+      if (noise(i + 10, j + 10) > 0.8) {
+          draw_water = true;
+          set_tileType(i, j, tile_water);
+      }
     }
   }
 
@@ -140,7 +159,7 @@ function p3_drawTile(i, j) {
 
     if (tileType[key] == tile_fence) {
 
-    } else if(tileType[key] == tile_water){
+    } else if (tileType[key] == tile_water) {
       textSize(20);
       text('🐽', 0, tw / 2);
 
@@ -148,9 +167,9 @@ function p3_drawTile(i, j) {
     else {
       textSize(20);
       let key2 = [i - 1, j];
-      let key3 = [i , j + 1];
-      let key4 = [i - 1 , j + 1];
-      if (tileType[key2] == tile_fence || tileType[key3] == tile_fence || tileType[key4] == tile_fence ) {
+      let key3 = [i, j + 1];
+      let key4 = [i - 1, j + 1];
+      if (tileType[key2] == tile_fence || tileType[key3] == tile_fence || tileType[key4] == tile_fence) {
         text('🐏', 0, tw / 2);
       } else {
         text('🐖', 0, tw / 2);
