@@ -14,12 +14,21 @@
     p3_drawAfter
 */
 
-function p3_preload() { }
-
-function p3_setup() { }
-
 let worldSeed;
 let tilesize = 40;
+
+let tile_grass = 1;
+let tile_ground = 2;
+let tile_fence = 3;
+let tile_water = 4;
+
+function p3_preload() {
+
+}
+
+function p3_setup() {
+}
+
 
 function p3_worldKeyChanged(key) {
   worldSeed = XXH.h32(key, 0);
@@ -44,36 +53,42 @@ function p3_tileClicked(i, j) {
   console.log(i, j);
 }
 
+let tileType = {};
+
+function set_tileType(i, j, type) {
+  let key = [i, j];
+  tileType[key] = type;
+}
+
 function p3_drawBefore() { }
 
 function p3_drawTile(i, j) {
-  noStroke();
+
+
+  let draw_grass = false;
+  let draw_ground = false;
+  let draw_fence = false;
+  let draw_water = false;
 
   push();
-  
 
-
-
-  if (noise(i, j) > 0.4) {
-    tile_grass(i, j);
-    if (noise(i + 20, j + 20) > 0.6) {
-     // tile_fence(i, j);
-     fill(255);
-     //stroke(1);
-     rect(i * tilesize + 0, j * tilesize + 8, 40, 5);
-     //rect(i * tilesize + 5, j * tilesize + 5, 5, 15, 2);
-     //rect(i * tilesize + 18, j * tilesize + 5, 5, 15, 2);
-     //rect(i * tilesize + 31, j * tilesize + 5, 5, 15, 2);
+  if (noise(i, j) > 0.6) {
+    draw_grass = true;
+    set_tileType(i, j, tile_grass);
+    if (noise(i + 10, j + 10) > 0.7) {
+      draw_fence = true;
+      set_tileType(i, j, tile_fence);
     }
   } else {
-    tile_ground(i, j);
-    if (noise(i + 20, j + 20) > 0.7) {
-      tile_waterPit(i, j)
+    draw_ground = true;
+    set_tileType(i, j, tile_ground);
+    if (noise(i + 10, j + 10) > 0.7) {
+      draw_water = true;
+      set_tileType(i, j, tile_water);
     }
   }
 
-
-
+  noStroke();
   beginShape();
   vertex(0, 0);
   vertex(0, tw);
@@ -81,14 +96,75 @@ function p3_drawTile(i, j) {
   vertex(th, 0);
   endShape(CLOSE);
 
-  // let n = clicks[[i, j]] | 0;
-  // if (n % 2 == 1) {
-  //   fill(255, 255, 0, 180);
-  //   ellipse(th/2, tw/2, 10, 10);
-  // }
 
+  if (draw_grass) {
+    noStroke();
+    fill(197, 250, 162);
+    quad(0, 0, th, 0, th, tw, 0, tw);
+    draw_grass = false;
+  }
+
+
+  if (draw_ground) {
+    noStroke();
+    fill(237, 209, 145);
+    quad(0, 0, th, 0, th, tw, 0, tw);
+  }
+
+  if (draw_fence) {
+    textSize(25);
+    textAlign(CENTER)
+    text('🍀', th / 2, 2 * tw / 3);
+
+
+
+    draw_fence = false;
+  }
+
+  if (draw_water) {
+    fill(194, 233, 255);
+    noStroke();
+    ellipse(11, 18, 20, 10);
+    ellipse(16, 20, 5, 5);
+    ellipse(21, 20, 7, 7);
+    draw_water = false;
+  }
+
+
+
+
+  let n = clicks[[i, j]] | 0;
+  if (n % 2 == 1) {
+
+    let key = [i, j];
+
+    if (tileType[key] == tile_fence) {
+
+    } else if(tileType[key] == tile_water){
+      textSize(20);
+      text('🐽', 0, tw / 2);
+
+    }
+    else {
+      textSize(20);
+      let key2 = [i - 1, j];
+      let key3 = [i , j + 1];
+      if (tileType[key2] == tile_fence || tileType[key3] == tile_fence) {
+        text('🐏', 0, tw / 2);
+      } else {
+        text('🐖', 0, tw / 2);
+      }
+    }
+  }
   pop();
+
 }
+
+
+
+
+
+
 
 function p3_drawSelectedTile(i, j) {
   noFill();
@@ -107,40 +183,9 @@ function p3_drawSelectedTile(i, j) {
 }
 
 
-
-function tile_ground(i, j) {
-  noStroke();
-  fill(237, 209, 145);
-  quad(i * tilesize, j * tilesize, (i + 1) * tilesize, j * tilesize,
-    (i + 1) * tilesize, (j + 1) * tilesize, i * tilesize, (j + 1) * tilesize);
-}
-
-function tile_grass(i, j) {
-  noStroke();
-  fill(197, 250, 162);
-  quad(i * tilesize, j * tilesize, (i + 1) * tilesize, j * tilesize,
-    (i + 1) * tilesize, (j + 1) * tilesize, i * tilesize, (j + 1) * tilesize);
-
+function p3_drawAfter() {
 
 }
 
-function tile_fence(i, j) {
-  fill(255);
-  stroke(1);
-  rect(i * tilesize + 0, j * tilesize + 8, 40, 5);
-  rect(i * tilesize + 5, j * tilesize + 5, 5, 15, 2);
-  rect(i * tilesize + 18, j * tilesize + 5, 5, 15, 2);
-  rect(i * tilesize + 31, j * tilesize + 5, 5, 15, 2);
 
-}
 
-function tile_waterPit(i, j) {
-  fill(194, 233, 255);
-  noStroke();
-  ellipse(i * tilesize + 11, j * tilesize + 18, 20, 10);
-  ellipse(i * tilesize + 16, j * tilesize + 20, 5, 5);
-  ellipse(i * tilesize + 21, j * tilesize + 20, 7, 7);
-
-}
-
-function p3_drawAfter() { }
