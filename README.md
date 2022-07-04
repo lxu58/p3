@@ -1,4 +1,4 @@
-# p3-endless-scene-starter
+# p3 Laihong Xu
 
 Credit: Adam Smith/Isaac Karth 
 Edited by: Asiiah Song
